@@ -2,9 +2,7 @@ import { useEffect } from "react";
 
 function App() {
   useEffect(() => {
-    console.log("warning");
-
-    console.error(testing);
+    console.log(testing);
   }, []);
 
   return (
