@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-inter: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+@utility font-synthesis {
+  font-synthesis: none;
+}
+
+@utility text-rendering {
+  text-rendering: optimizeLegibility;
+}
+
+@layer base {
+  html {
+    @apply font-inter antialiased font-synthesis text-rendering;
+  }
+
+  body {
+    @apply flex place-content-center min-w-xs min-h-screen;
+  }
+
+  #root {
+     @apply flex flex-grow min-h-screen
+  }
+}
+
+
