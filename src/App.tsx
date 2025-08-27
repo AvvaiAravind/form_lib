@@ -1,13 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
-import InputFieldComponent from "./form/InputField";
+import FormBuilder, { FieldProps } from "./form/components/Field";
 
 const formSchema = z.object({
-  color: z.string(),
+  color: z.string().min(1, "Color is required"),
+  textarea: z.string().min(1, "Textarea is required"),
+  wind: z.string().min(1, "Wind is required"),
 });
 
 type formType = z.infer<typeof formSchema>;
@@ -16,12 +18,43 @@ function App() {
   const form = useForm<formType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      color: "string",
+      color: "",
+      textarea: "",
+      wind: "",
     },
   });
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const fields = useMemo((): FieldProps<formType>[] => {
+    return [
+      {
+        type: "text",
+        ref: inputRef,
+        name: "color",
+        label: "Color",
+        placeholder: "Enter your color",
+        autoFocus: true,
+        autoComplete: "on",
+        className: {
+          inputClass: "",
+        },
+      },
+      {
+        type: "textarea",
+        ref: textareaRef,
+        name: "textarea",
+        label: "Textarea",
+        placeholder: "Enter your textarea",
+        rows: 10,
+        cols: 10,
+        className: {
+          textareaClass: "",
+        },
+      },
+    ];
+  }, []);
   // 2. Define a submit handler.
   function onSubmit(values: formType) {
     console.warn(values);
@@ -35,19 +68,13 @@ function App() {
       <div className="w-full max-w-md border">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <InputFieldComponent
-              ref={inputRef}
-              className={{
-                inputClass: "",
-              }}
+            <FormBuilder fields={fields} />
+
+            <FormBuilder.Field
               type="search"
-              control={form.control}
-              label="Color"
-              name="color"
-              required
-              disabled={false}
-              autoFocus={true}
-              autoComplete="on"
+              name="wind"
+              label="Wind"
+              placeholder="Enter your wind"
             />
             <Button type="submit">Submit</Button>
           </form>

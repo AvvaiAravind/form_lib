@@ -6,32 +6,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@src/components/ui/form";
-import { Input } from "@src/components/ui/input";
+import { Textarea } from "@src/components/ui/textarea";
 import { cn } from "@src/lib/utils";
-import { forwardRef, InputHTMLAttributes, Ref } from "react";
-import { Control, FieldPath, FieldValues } from "react-hook-form";
+import { forwardRef, Ref, TextareaHTMLAttributes } from "react";
+import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
 import { toId } from "storybook/internal/csf";
-import { mergeRefs } from "./utils/mergeRef";
-
-type Types =
-  | "text"
-  | "email"
-  | "number"
-  | "password"
-  | "tel"
-  | "url"
-  | "search"
-  | "color"
-  | "date"
-  | "time"
-  | "datetime-local"
-  | "month"
-  | "week";
+import { mergeRefs } from "../utils/mergeRef";
 
 // type definitions
 interface FieldConfigProps<T extends FieldValues = FieldValues> {
-  type: Types;
-  control: Control<T>;
   name: FieldPath<T>;
   label?: string;
   placeholder?: string;
@@ -40,7 +23,7 @@ interface FieldConfigProps<T extends FieldValues = FieldValues> {
   disabled?: boolean;
   className?: {
     itemClass?: string;
-    inputClass?: string;
+    textareaClass?: string;
     labelClass?: string;
     descriptionClass?: string;
     controlClass?: string;
@@ -52,29 +35,29 @@ interface FieldConfigProps<T extends FieldValues = FieldValues> {
 // it will override React Hook Form's defaults.
 // This allows controlled usage but removes RHF sync.
 
-type InputFieldConfigProps<T extends FieldValues = FieldValues> =
+type TextareaFieldConfigProps<T extends FieldValues = FieldValues> =
   FieldConfigProps<T> &
     Omit<
-      InputHTMLAttributes<HTMLInputElement>,
+      TextareaHTMLAttributes<HTMLTextAreaElement>,
       "ref" | "className" | "name" | "id" | "type" | "defaultValue"
     > & {
       /** Override RHF's controlled value */
       value?: string | number;
 
       /** Called in addition to RHF's onChange */
-      onChange?: React.ChangeEventHandler<HTMLInputElement>;
+      onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
 
       /** Called in addition to RHF's onBlur */
-      onBlur?: React.FocusEventHandler<HTMLInputElement>;
+      onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
     };
 
-const InputField = <T extends FieldValues = FieldValues>(
-  props: InputFieldConfigProps<T>,
-  ref: Ref<HTMLInputElement>
+const TextareaField = <T extends FieldValues = FieldValues>(
+  props: TextareaFieldConfigProps<T>,
+  ref: Ref<HTMLTextAreaElement>
 ) => {
+  const { control } = useFormContext<T>();
+
   const {
-    type = "text",
-    control,
     name,
     label,
     className,
@@ -87,20 +70,20 @@ const InputField = <T extends FieldValues = FieldValues>(
 
   // Validation for required props
   if (!name || !control) {
-    console.error("InputField: name and control are required props");
+    console.error("TextareaField: name and control are required props");
     return null;
   }
 
   if ("defaultValue" in props) {
     console.warn(
-      "[InputField]: `defaultValue` is ignored. Please use useForm({ defaultValues }) instead."
+      "[TextareaField]: `defaultValue` is ignored. Please use useForm({ defaultValues }) instead."
     );
   }
 
   const {
     itemClass,
     labelClass,
-    inputClass,
+    textareaClass,
     descriptionClass,
     controlClass,
     messageClass,
@@ -122,6 +105,7 @@ const InputField = <T extends FieldValues = FieldValues>(
         ]
           .filter(Boolean)
           .join(" ");
+        const mergedRef = mergeRefs(fieldRef, ref);
 
         return (
           <FormItem className={cn("space-y-0", itemClass)}>
@@ -137,12 +121,11 @@ const InputField = <T extends FieldValues = FieldValues>(
               {required && <span className="text-red-500">*</span>}
             </FormLabel>
             <FormControl className={cn("", controlClass)}>
-              <Input
-                ref={mergeRefs(fieldRef, ref)}
+              <Textarea
+                ref={mergedRef}
                 id={safeId}
-                className={cn("", inputClass)}
+                className={cn("", textareaClass)}
                 placeholder={placeholder}
-                type={type}
                 disabled={disabled}
                 required={required}
                 aria-describedby={ariaDescribedBy}
@@ -178,10 +161,10 @@ const InputField = <T extends FieldValues = FieldValues>(
 };
 
 // Create the forwardRef component with proper typing
-const InputFieldComponent = forwardRef(InputField) as <
+const TextareaFieldComponent = forwardRef(TextareaField) as <
   T extends FieldValues = FieldValues,
 >(
-  props: InputFieldConfigProps<T> & { ref?: Ref<HTMLInputElement> }
-) => ReturnType<typeof InputField>;
+  props: TextareaFieldConfigProps<T> & { ref?: Ref<HTMLTextAreaElement> }
+) => ReturnType<typeof TextareaField>;
 
-export default InputFieldComponent;
+export default TextareaFieldComponent;

@@ -2,7 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Meta, StoryObj } from "@storybook/react-vite";
 import { FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
-import InputField from "./InputField";
+import InputField from "./components/InputField";
+import "../index.css";
 
 // Enhanced form schema with better validation
 const formSchema = z.object({
@@ -11,7 +12,7 @@ const formSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   age: z.number().min(18, "Must be at least 18 years old"),
   phone: z.string().optional(),
-  website: z.string().url("Please enter a valid URL").optional(),
+  website: z.url("Please enter a valid URL").optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -62,6 +63,10 @@ type Story = StoryObj<typeof meta>;
 
 // Basic stories with proper form context
 export const Text: Story = {
+  args: {
+    type: "text",
+  },
+
   render: () => {
     const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
@@ -72,7 +77,6 @@ export const Text: Story = {
       <FormProvider {...form}>
         <div className="w-full max-w-md space-y-4">
           <InputField
-            control={form.control}
             type="text"
             name="name"
             label="Full Name"
@@ -97,7 +101,6 @@ export const Email: Story = {
       <FormProvider {...form}>
         <div className="w-full max-w-md space-y-4">
           <InputField
-            control={form.control}
             type="email"
             name="email"
             label="Email Address"
@@ -122,7 +125,6 @@ export const Password: Story = {
       <FormProvider {...form}>
         <div className="w-full max-w-md space-y-4">
           <InputField
-            control={form.control}
             type="password"
             name="password"
             label="Password"
@@ -152,6 +154,7 @@ export const CompleteForm: Story = {
     });
 
     const onSubmit = (data: FormData) => {
+      form.trigger();
       console.warn("Form submitted:", data);
     };
 
@@ -160,44 +163,39 @@ export const CompleteForm: Story = {
         <div className="w-full max-w-md space-y-6">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <InputField
-              control={form.control}
               type="text"
               name="name"
               label="Full Name"
               placeholder="Enter your full name"
-              required={true}
+              // required={true}
             />
 
             <InputField
-              control={form.control}
               type="email"
               name="email"
               label="Email Address"
               placeholder="Enter your email"
-              required={true}
+              // required={true}
             />
 
             <InputField
-              control={form.control}
               type="password"
               name="password"
               label="Password"
               placeholder="Create a strong password"
-              required={true}
+              // required={true}
             />
 
             <InputField
-              control={form.control}
               type="number"
               name="age"
               label="Age"
               placeholder="Enter your age"
-              required={true}
-              min={18}
+              // required={true}
+              // min={18}
             />
 
             <InputField
-              control={form.control}
               type="tel"
               name="phone"
               label="Phone Number"
@@ -206,7 +204,6 @@ export const CompleteForm: Story = {
             />
 
             <InputField
-              control={form.control}
               type="url"
               name="website"
               label="Website"
@@ -244,7 +241,6 @@ export const WithError: Story = {
       <FormProvider {...form}>
         <div className="w-full max-w-md space-y-4">
           <InputField
-            control={form.control}
             type="email"
             name="email"
             label="Email Address"

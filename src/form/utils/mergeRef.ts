@@ -8,7 +8,7 @@ export const mergeRefs = <T = unknown>(
       if (typeof ref === "function") {
         ref(value);
       } else if (ref != null && ref.current !== undefined) {
-        (ref as React.RefObject<T | null>).current = value;
+        (ref as RefObject<T | null>).current = value;
       }
     });
   };
