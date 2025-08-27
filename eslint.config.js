@@ -28,6 +28,7 @@ export default tseslint.config(
       ],
       // manual rules
       "no-console": ["warn", { allow: ["warn", "error"] }],
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
   storybook.configs["flat/recommended"]
