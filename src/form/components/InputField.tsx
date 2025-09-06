@@ -51,7 +51,7 @@ interface FieldConfigProps<T extends FieldValues = FieldValues> {
 // it will override React Hook Form's defaults.
 // This allows controlled usage but removes RHF sync.
 
-type InputFieldConfigProps<T extends FieldValues = FieldValues> =
+export type InputFieldConfigProps<T extends FieldValues = FieldValues> =
   FieldConfigProps<T> &
     Omit<
       InputHTMLAttributes<HTMLInputElement>,
@@ -67,7 +67,7 @@ type InputFieldConfigProps<T extends FieldValues = FieldValues> =
       onBlur?: React.FocusEventHandler<HTMLInputElement>;
     };
 
-const InputField = <T extends FieldValues = FieldValues>(
+const InputFieldComp = <T extends FieldValues = FieldValues>(
   props: InputFieldConfigProps<T>,
   ref: Ref<HTMLInputElement>
 ) => {
@@ -150,7 +150,7 @@ const InputField = <T extends FieldValues = FieldValues>(
                 aria-invalid={fieldState.error ? "true" : "false"}
                 aria-required={required}
                 {...fieldProps}
-                value={restProps.value ?? fieldProps.value}
+                {...restProps}
                 onChange={(e) => {
                   fieldProps.onChange(e);
                   restProps?.onChange?.(e);
@@ -159,7 +159,7 @@ const InputField = <T extends FieldValues = FieldValues>(
                   fieldProps.onBlur();
                   restProps?.onBlur?.(e);
                 }}
-                {...restProps}
+                value={restProps.value ?? fieldProps.value}
               />
             </FormControl>
             {description && (
@@ -179,10 +179,10 @@ const InputField = <T extends FieldValues = FieldValues>(
 };
 
 // Create the forwardRef component with proper typing
-const InputFieldComponent = forwardRef(InputField) as <
+const InputField = forwardRef(InputFieldComp) as <
   T extends FieldValues = FieldValues,
 >(
   props: InputFieldConfigProps<T> & { ref?: Ref<HTMLInputElement> }
-) => ReturnType<typeof InputField>;
+) => ReturnType<typeof InputFieldComp>;
 
-export default InputFieldComponent;
+export default InputField;

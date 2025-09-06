@@ -5,11 +5,13 @@ import z from "zod";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
 import FormBuilder, { FieldProps } from "./form/components/Field";
+import NumberField from "./form/components/NumberField";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
   textarea: z.string().min(1, "Textarea is required"),
   wind: z.string().min(1, "Wind is required"),
+  price: z.string(),
 });
 
 type formType = z.infer<typeof formSchema>;
@@ -21,6 +23,7 @@ function App() {
       color: "",
       textarea: "",
       wind: "",
+      price: "",
     },
   });
 
@@ -69,6 +72,7 @@ function App() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormBuilder fields={fields} />
+            <NumberField ref={inputRef} name="price" label="Price" />
 
             <FormBuilder.Field
               type="search"

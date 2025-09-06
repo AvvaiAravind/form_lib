@@ -70,7 +70,7 @@ const Field = <T extends FieldValues = FieldValues>(
   }
 };
 
-const FieldCom = forwardRef(Field as any) as <
+const FieldComp = forwardRef(Field as any) as <
   T extends FieldValues = FieldValues,
 >(
   props: FieldProps<T> & { ref?: Ref<ElementTypeMap[keyof ElementTypeMap]> }
@@ -81,11 +81,11 @@ const FormBuilder = <T extends FieldValues = FieldValues>({
   children,
 }: FormBuilderProps<T>) => {
   if (fields && fields.length) {
-    return fields.map((field) => <FieldCom key={field.name} {...field} />);
+    return fields.map((field) => <FieldComp key={field.name} {...field} />);
   }
   return <>{children}</>;
 };
 
-FormBuilder.Field = FieldCom as any;
+FormBuilder.Field = FieldComp as any;
 
 export default FormBuilder;

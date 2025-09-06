@@ -51,7 +51,7 @@ type TextareaFieldConfigProps<T extends FieldValues = FieldValues> =
       onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
     };
 
-const TextareaField = <T extends FieldValues = FieldValues>(
+const TextareaFieldComp = <T extends FieldValues = FieldValues>(
   props: TextareaFieldConfigProps<T>,
   ref: Ref<HTMLTextAreaElement>
 ) => {
@@ -161,10 +161,10 @@ const TextareaField = <T extends FieldValues = FieldValues>(
 };
 
 // Create the forwardRef component with proper typing
-const TextareaFieldComponent = forwardRef(TextareaField) as <
+const TextareaField = forwardRef(TextareaFieldComp) as <
   T extends FieldValues = FieldValues,
 >(
   props: TextareaFieldConfigProps<T> & { ref?: Ref<HTMLTextAreaElement> }
-) => ReturnType<typeof TextareaField>;
+) => ReturnType<typeof TextareaFieldComp>;
 
-export default TextareaFieldComponent;
+export default TextareaField;
