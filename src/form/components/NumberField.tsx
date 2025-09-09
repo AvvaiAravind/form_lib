@@ -1,6 +1,6 @@
 // NumberField.tsx
 
-import { forwardRef, Ref, useCallback } from "react";
+import { forwardRef, Ref, useCallback, useMemo } from "react";
 import { FieldValues } from "react-hook-form";
 import InputFieldComponent, { InputFieldConfigProps } from "./InputField";
 
@@ -18,6 +18,29 @@ type NumberFieldProps<T extends FieldValues = FieldValues> = Omit<
 > &
   NumberFieldConfig;
 
+// building regex pattern
+const getPattern = (allowDecimals: boolean, allowNegative: boolean) => {
+  let pattern = "[^0-9";
+  if (allowDecimals) pattern += ".";
+  if (allowNegative) pattern += "-";
+  pattern += "]";
+  return new RegExp(pattern, "g");
+};
+
+const allowedKeys = new Set([
+  "Backspace",
+  "Delete",
+  "Tab",
+  "Escape",
+  "Enter",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+  "Home",
+  "End",
+]);
+
 const NumberFieldComp = <T extends FieldValues = FieldValues>(
   props: NumberFieldProps<T>,
   ref: Ref<HTMLInputElement>
@@ -33,30 +56,27 @@ const NumberFieldComp = <T extends FieldValues = FieldValues>(
     ...inputFieldProps
   } = props;
 
+  // In component
+  const numericPattern = useMemo(
+    () => getPattern(allowDecimals, allowNegative),
+    [allowDecimals, allowNegative]
+  );
+
   // Number cleaning utility
   const cleanNumericValue = useCallback(
     (value: string): string => {
-      let cleaned = value;
+      // Early return for empty string
+      if (!value) return value;
 
-      // Remove all non-numeric characters except decimal and negative
-      let pattern = "[^0-9";
-      if (allowDecimals) pattern += ".";
-      if (allowNegative) pattern += "-";
-      pattern += "]";
+      // Single pass cleaning
+      let cleaned = value.replace(numericPattern, "");
 
-      cleaned = cleaned.replace(new RegExp(pattern, "g"), "");
-
-      // Handle negative sign - only at the beginning
-      if (allowNegative) {
-        const negativeCount = (cleaned.match(/-/g) || []).length;
-        if (negativeCount > 1) {
-          cleaned = cleaned.replace(/-/g, "");
-          if (negativeCount > 0) cleaned = "-" + cleaned;
-        }
-        // Ensure negative is at the start
-        if (cleaned.includes("-") && !cleaned.startsWith("-")) {
-          cleaned = cleaned.replace("-", "");
-          cleaned = "-" + cleaned;
+      // Combine negative handling
+      if (allowNegative && cleaned.includes("-")) {
+        const negativeIndex = cleaned.indexOf("-");
+        if (negativeIndex > 0) {
+          // Move negative to front in one operation
+          cleaned = "-" + cleaned.replace(/-/g, "");
         }
       }
 
@@ -80,39 +100,27 @@ const NumberFieldComp = <T extends FieldValues = FieldValues>(
         }
       }
 
-      // Apply min/max constraints
-      const numValue = parseFloat(cleaned);
-      if (!isNaN(numValue)) {
-        if (min !== undefined && numValue < min) {
-          cleaned = min.toString();
-        }
-        if (max !== undefined && numValue > max) {
-          cleaned = max.toString();
+      // Only parse when needed for min/max validation
+      if (min !== undefined || max !== undefined) {
+        const numValue = parseFloat(cleaned);
+        if (!isNaN(numValue)) {
+          if (min !== undefined && numValue < min) {
+            cleaned = min.toString();
+          }
+          if (max !== undefined && numValue > max) {
+            cleaned = max.toString();
+          }
         }
       }
 
       return cleaned;
     },
-    [allowDecimals, allowNegative, maxDecimals, min, max]
+    [numericPattern, allowDecimals, allowNegative, maxDecimals, min, max]
   );
 
   // Prevent non-numeric key presses
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      const allowedKeys = [
-        "Backspace",
-        "Delete",
-        "Tab",
-        "Escape",
-        "Enter",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowUp",
-        "ArrowDown",
-        "Home",
-        "End",
-      ];
-
       const isNumeric = /[0-9]/.test(e.key);
       const isDecimal =
         allowDecimals && e.key === "." && !e.currentTarget.value.includes(".");
@@ -126,7 +134,7 @@ const NumberFieldComp = <T extends FieldValues = FieldValues>(
       const isCtrlCmd = e.ctrlKey || e.metaKey;
 
       if (
-        !allowedKeys.includes(e.key) &&
+        !allowedKeys.has(e.key) &&
         !isNumeric &&
         !isDecimal &&
         !isNegative &&
@@ -154,6 +162,17 @@ const NumberFieldComp = <T extends FieldValues = FieldValues>(
     },
     [cleanNumericValue, onChange]
   );
+
+  // Validate number field specific props
+  if (maxDecimals < 0) {
+    console.warn("NumberField: maxDecimals should be >= 0");
+    return null;
+  }
+
+  if (min !== undefined && max !== undefined && min > max) {
+    console.error("NumberField: min value cannot be greater than max value");
+    return null;
+  }
 
   return (
     <InputFieldComponent

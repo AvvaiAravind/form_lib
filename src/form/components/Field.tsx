@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode, Ref } from "react";
+import { forwardRef, memo, ReactNode, Ref } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import InputField, { InputTypes } from "./InputField";
 import TextareaField from "./Textarea";
@@ -76,7 +76,7 @@ const FieldComp = forwardRef(Field as any) as <
   props: FieldProps<T> & { ref?: Ref<ElementTypeMap[keyof ElementTypeMap]> }
 ) => ReturnType<typeof Field>;
 
-const FormBuilder = <T extends FieldValues = FieldValues>({
+const FormBuilderBase = <T extends FieldValues = FieldValues>({
   fields,
   children,
 }: FormBuilderProps<T>) => {
@@ -86,6 +86,8 @@ const FormBuilder = <T extends FieldValues = FieldValues>({
   return <>{children}</>;
 };
 
-FormBuilder.Field = FieldComp as any;
+const FormBuilder = memo(FormBuilderBase) as any;
+
+FormBuilder.Field = FieldComp;
 
 export default FormBuilder;
