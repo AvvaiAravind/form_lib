@@ -1,9 +1,10 @@
 import { forwardRef, memo, ReactNode, Ref } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import InputField, { InputTypes } from "./InputField";
+import NumberField from "./NumberField";
 import TextareaField from "./Textarea";
 
-type FieldTypes = "textarea" | InputTypes;
+type FieldTypes = "textarea" | InputTypes | "number-text";
 
 export type FieldProps<T extends FieldValues = FieldValues> = {
   type: FieldTypes;
@@ -49,6 +50,15 @@ const Field = <T extends FieldValues = FieldValues>(
       return (
         <TextareaField<T>
           ref={ref as Ref<HTMLTextAreaElement>}
+          name={name}
+          {...restProps}
+        />
+      );
+
+    case "number-text":
+      return (
+        <NumberField<T>
+          ref={ref as Ref<HTMLInputElement>}
           name={name}
           {...restProps}
         />

@@ -26,7 +26,8 @@ export type InputTypes =
   | "time"
   | "datetime-local"
   | "month"
-  | "week";
+  | "week"
+  | "file";
 
 // type definitions
 interface FieldConfigProps<T extends FieldValues = FieldValues> {
