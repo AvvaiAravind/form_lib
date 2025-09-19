@@ -6,12 +6,14 @@ import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
 import FormBuilder, { FieldProps } from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
+import SelectField from "./form/components/SelectFiled";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
   textarea: z.string().min(1, "Textarea is required"),
   wind: z.string().min(1, "Wind is required"),
   price: z.string(),
+  location: z.string().min(1, "location is required"),
 });
 
 type formType = z.infer<typeof formSchema>;
@@ -24,6 +26,7 @@ function App() {
       textarea: "",
       wind: "",
       price: "",
+      location: "",
     },
   });
 
@@ -73,6 +76,32 @@ function App() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormBuilder fields={fields} />
             <NumberField ref={inputRef} name="price" label="Price" />
+            <SelectField
+              name="location"
+              className={{
+                selectClass: "w-full",
+              }}
+              options={[
+                {
+                  label: "North America",
+                  options: [
+                    { label: "United States", value: "US" },
+                    { label: "Canada", value: "CA" },
+                  ],
+                },
+                { type: "separator" },
+                {
+                  label: "Europe",
+                  options: [
+                    { label: "Germany", value: "DE" },
+                    { label: "France", value: "FR" },
+                  ],
+                },
+                { type: "separator" },
+                { label: "Other", value: "other" }, // Simple option mixed in
+              ]}
+              showScrollButtons={true}
+            />
 
             <FormBuilder.Field
               type="search"

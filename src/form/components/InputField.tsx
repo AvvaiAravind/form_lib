@@ -143,7 +143,7 @@ const InputFieldComp = <T extends FieldValues = FieldValues>(
                 ref={mergedRef}
                 id={safeId}
                 className={cn("", inputClass)}
-                placeholder={placeholder}
+                placeholder={placeholder || name}
                 type={type}
                 disabled={disabled}
                 required={required}
