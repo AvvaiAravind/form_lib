@@ -48,7 +48,7 @@ function App() {
         },
       },
       {
-        type: "textarea",
+        type: "textarea", // need to implement character counter option in future
         ref: textareaRef,
         name: "textarea",
         label: "Textarea",
