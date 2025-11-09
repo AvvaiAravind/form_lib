@@ -78,7 +78,7 @@ function App() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormBuilderWithField<formType> fields={fields} />
-            <NumberField<formType> ref={inputRef} name="price" label="Price" />
+            <NumberField<formType> name="price" label="Price" />
             <SelectField<formType>
               name="location"
               className={{
