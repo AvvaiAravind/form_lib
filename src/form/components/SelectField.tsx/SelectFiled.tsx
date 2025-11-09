@@ -9,23 +9,20 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
   SelectScrollDownButton,
   SelectScrollUpButton,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@src/components/ui/select";
 import { cn } from "@src/lib/utils";
-import { forwardRef, Ref /* SelectHTMLAttributes */, useCallback } from "react";
+import { forwardRef, Ref /* SelectHTMLAttributes */, useMemo } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
-import { toId } from "storybook/internal/csf";
-import { mergeRefs } from "../utils/mergeRef";
+import { mergeRefs } from "../../utils/mergeRef";
+import toId from "../../utils/toId";
+import { renderSelectOptions } from "./selectFieldHelpers";
 
 // Enhanced option types
-interface SimpleOption {
+export interface SelectSimpleOption {
   _id?: string;
   id?: string;
   label: string;
@@ -33,27 +30,40 @@ interface SimpleOption {
   disabled?: boolean;
 }
 
-interface OptionGroup {
+export interface SelectOptionGroup {
   label: string;
-  options: SimpleOption[];
+  options: SelectSimpleOption[];
 }
 
-interface SeparatorOption {
+export interface SelectSeparatorOption {
   type: "separator";
 }
 
-type OptionItem = SimpleOption | OptionGroup | SeparatorOption;
+export type SelectOptionItem =
+  | SelectSimpleOption
+  | SelectOptionGroup
+  | SelectSeparatorOption;
 
 // type definitions
 interface FieldConfigProps<T extends FieldValues = FieldValues> {
   name: FieldPath<T>;
-  options: OptionItem[];
+  options: SelectOptionItem[];
   label?: string;
   placeholder?: string;
   description?: string;
   required?: boolean;
   disabled?: boolean;
   showScrollButtons?: boolean;
+  /** Helpful hints or requirements - appears between label and input */
+  helperText?: string;
+  /** Loading state for async options */
+  isLoading?: boolean;
+
+  /** Custom loading message */
+  loadingText?: string;
+
+  /** Message when no options available */
+  emptyText?: string;
   className?: {
     itemClass?: string;
     selectClass?: string;
@@ -61,6 +71,7 @@ interface FieldConfigProps<T extends FieldValues = FieldValues> {
     descriptionClass?: string;
     controlClass?: string;
     messageClass?: string;
+    helperClass?: string;
   };
 }
 
@@ -100,22 +111,10 @@ export type SelectFieldConfigProps<T extends FieldValues = FieldValues> =
     style?: React.CSSProperties;
 
     // Allow any data-* attributes
-    [key: `data-${string}`]: string | undefined;
+    [key: `data-${string}`]: string | number | boolean | undefined;
   };
 
 // type guards
-
-const isSimpleOption = (item: OptionItem): item is SimpleOption => {
-  return "value" in item && "label" in item;
-};
-
-const isOptionGroup = (item: OptionItem): item is OptionGroup => {
-  return "options" in item && Array.isArray((item as any).options);
-};
-
-const isSeparator = (item: OptionItem): item is SeparatorOption => {
-  return "type" in item && (item as any).type === "separator";
-};
 
 const SelectFieldComp = <T extends FieldValues = FieldValues>(
   props: SelectFieldConfigProps<T>,
@@ -130,9 +129,13 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
     className,
     placeholder,
     description,
+    helperText,
     required = false,
     disabled = false,
     showScrollButtons = false,
+    isLoading = false,
+    loadingText = "Loading options...",
+    emptyText = "No options available",
     value,
     onValueChange,
     onOpenChange,
@@ -141,39 +144,10 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
     ...restProps
   } = props;
 
-  const renderOptions = useCallback(() => {
-    return options.map((item, index) => {
-      if (isSimpleOption(item)) {
-        return (
-          <SelectItem
-            key={item._id || item.id || `${item.value}-${index}`}
-            value={item.value}
-          >
-            {item.label}
-          </SelectItem>
-        );
-      } else if (isOptionGroup(item)) {
-        return (
-          <SelectGroup key={`group-${item.label}`}>
-            <SelectLabel>{item.label}</SelectLabel>
-            {item.options.map((option) => (
-              <SelectItem
-                key={option.value}
-                value={String(option.value)}
-                disabled={option.disabled}
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        );
-      } else if (isSeparator(item)) {
-        return <SelectSeparator key={`separator-${index}`} />;
-      } else {
-        return null;
-      }
-    });
-  }, [options]);
+  const renderOptions = useMemo(
+    () => renderSelectOptions(options, isLoading, loadingText, emptyText),
+    [options, isLoading, loadingText, emptyText]
+  );
 
   // Validation for required props
   if (!name || !control) {
@@ -194,11 +168,13 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
     descriptionClass,
     controlClass,
     messageClass,
+    helperClass,
   } = className ?? {};
 
   const safeId = toId(name);
   const errorId = `${safeId}-error`;
   const descriptionId = description ? `${name}-description` : undefined;
+  const helperTextId = helperText ? `${safeId}-helper` : undefined;
 
   return (
     <FormField
@@ -208,6 +184,7 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
         const { ref: fieldRef, ...fieldProps } = field;
         const ariaDescribedBy = [
           descriptionId,
+          helperTextId,
           fieldState.error ? errorId : undefined,
         ]
           .filter(Boolean)
@@ -227,6 +204,15 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
               <span>{label ? label : name}</span>
               {required && <span className="text-red-500">*</span>}
             </FormLabel>
+            {/* Helper Text - appears between label and input */}
+            {helperText && (
+              <p
+                id={helperTextId}
+                className={cn("text-xs text-muted-foreground", helperClass)}
+              >
+                {helperText}
+              </p>
+            )}
             <Select
               disabled={disabled}
               required={required}
@@ -256,7 +242,8 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
                 <SelectTrigger
                   ref={mergedRef}
                   id={safeId}
-                  className={cn("", selectClass)}
+                  className={cn("w-full", selectClass)}
+                  aria-label={props["aria-label"] || label}
                   aria-describedby={ariaDescribedBy}
                   aria-invalid={fieldState.error ? "true" : "false"}
                   aria-required={required}
@@ -267,7 +254,7 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
               </FormControl>
               <SelectContent>
                 {showScrollButtons && <SelectScrollUpButton />}
-                {renderOptions()}
+                {renderOptions}
                 {showScrollButtons && <SelectScrollDownButton />}
               </SelectContent>
             </Select>

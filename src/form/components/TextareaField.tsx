@@ -10,8 +10,8 @@ import { Textarea } from "@src/components/ui/textarea";
 import { cn } from "@src/lib/utils";
 import { forwardRef, Ref, TextareaHTMLAttributes } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
-import { toId } from "storybook/internal/csf";
 import { mergeRefs } from "../utils/mergeRef";
+import toId from "../utils/toId";
 
 // type definitions
 interface FieldConfigProps<T extends FieldValues = FieldValues> {

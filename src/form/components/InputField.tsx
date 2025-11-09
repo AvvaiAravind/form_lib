@@ -10,8 +10,8 @@ import { Input } from "@src/components/ui/input";
 import { cn } from "@src/lib/utils";
 import { forwardRef, InputHTMLAttributes, Ref } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
-import { toId } from "storybook/internal/csf";
 import { mergeRefs } from "../utils/mergeRef";
+import toId from "../utils/toId";
 
 export type InputTypes =
   | "text"

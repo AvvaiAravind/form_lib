@@ -2,7 +2,7 @@ import { forwardRef, memo, ReactNode, Ref } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import InputField, { InputTypes } from "./InputField";
 import NumberField from "./NumberField";
-import TextareaField from "./Textarea";
+import TextareaField from "./TextareaField";
 
 type FieldTypes = "textarea" | InputTypes | "number-text";
 

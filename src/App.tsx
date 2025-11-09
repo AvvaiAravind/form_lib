@@ -6,7 +6,7 @@ import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
 import FormBuilder, { FieldProps } from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
-import SelectField from "./form/components/SelectFiled";
+import SelectField from "./form/components/SelectField.tsx/SelectFiled";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
@@ -74,9 +74,9 @@ function App() {
       <div className="w-full max-w-md border">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormBuilder fields={fields} />
-            <NumberField ref={inputRef} name="price" label="Price" />
-            <SelectField
+            <FormBuilder<formType> fields={fields} />
+            <NumberField<formType> ref={inputRef} name="price" label="Price" />
+            <SelectField<formType>
               name="location"
               className={{
                 selectClass: "w-full",
