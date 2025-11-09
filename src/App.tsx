@@ -4,7 +4,10 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
-import FormBuilder, { FieldProps } from "./form/components/Field";
+import {
+  FieldProps,
+  default as FormBuilderWithField,
+} from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
 import SelectField from "./form/components/SelectField.tsx/SelectFiled";
 
@@ -74,7 +77,7 @@ function App() {
       <div className="w-full max-w-md border">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormBuilder<formType> fields={fields} />
+            <FormBuilderWithField<formType> fields={fields} />
             <NumberField<formType> ref={inputRef} name="price" label="Price" />
             <SelectField<formType>
               name="location"
@@ -103,7 +106,7 @@ function App() {
               showScrollButtons={true}
             />
 
-            <FormBuilder.Field
+            <FormBuilderWithField.Field<formType>
               type="search"
               name="wind"
               label="Wind"
