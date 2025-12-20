@@ -1,7 +1,6 @@
 "use client";
 
-import { CheckIcon, ChevronsUpDownIcon, XIcon } from "lucide-react";
-import { cn } from "@src/lib/utils";
+import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import {
   Command,
@@ -17,6 +16,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@src/components/ui/popover";
+import { cn } from "@src/lib/utils";
+import { CheckIcon, ChevronsUpDownIcon, XIcon } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -27,7 +28,6 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from "react";
-import { Badge } from "@src/components/ui/badge";
 
 type MultiSelectContextType = {
   open: boolean;
@@ -270,6 +270,7 @@ export function MultiSelectContent({
               placeholder={
                 typeof search === "object" ? search.placeholder : undefined
               }
+              // onChangeCapture={}
             />
           ) : (
             <button autoFocus className="sr-only" />

@@ -14,11 +14,10 @@ import {
   MultiSelectTrigger,
   MultiSelectValue,
 } from "@src/components/ui/multi-select";
+import toId from "@src/form/utils/toId";
 import { cn } from "@src/lib/utils";
-import { /* forwardRef, Ref,  */ useMemo } from "react";
+import { forwardRef, JSX, Ref, useMemo } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
-import { toId } from "storybook/internal/csf";
-// import { mergeRefs } from "../utils/mergeRef";
 
 // Enhanced option types
 interface SimpleOption {
@@ -35,11 +34,7 @@ interface OptionGroup {
   options: SimpleOption[];
 }
 
-interface SeparatorOption {
-  type: "separator";
-}
-
-type OptionItem = SimpleOption | OptionGroup | SeparatorOption;
+type OptionItem = SimpleOption | OptionGroup;
 
 // Type definitions
 interface FieldConfigProps<T extends FieldValues = FieldValues> {
@@ -99,9 +94,6 @@ export type MultiSelectFieldConfigProps<T extends FieldValues = FieldValues> =
     /** Called in addition to RHF's onChange */
     onValuesChange?: (values: string[]) => void;
 
-    /** Called when dropdown opens/closes */
-    onOpenChange?: (open: boolean) => void;
-
     // HTML attributes
     tabIndex?: number;
     "aria-label"?: string;
@@ -121,15 +113,9 @@ const isOptionGroup = (item: OptionItem): item is OptionGroup => {
   return "options" in item && Array.isArray(item.options);
 };
 
-const isSeparator = (item: OptionItem): item is SeparatorOption => {
-  return "type" in item && item.type === "separator";
-};
-
-// Note: MultiSelect doesn't need ref forwarding (uses internal state)
-// So we create it as a regular function component
 function MultiSelectFieldComp<T extends FieldValues = FieldValues>(
   props: MultiSelectFieldConfigProps<T>
-) {
+): JSX.Element | null {
   const { control } = useFormContext<T>();
 
   const {
@@ -141,7 +127,7 @@ function MultiSelectFieldComp<T extends FieldValues = FieldValues>(
     description,
     helperText,
     required = false,
-    // disabled = false,
+    disabled = false,
     isLoading = false,
     loadingText = "Loading options...",
     emptyText = "No options available",
@@ -150,7 +136,6 @@ function MultiSelectFieldComp<T extends FieldValues = FieldValues>(
     clickToRemove = true,
     value,
     onValuesChange,
-    // onOpenChange,
     ...restProps
   } = props;
 
@@ -202,9 +187,6 @@ function MultiSelectFieldComp<T extends FieldValues = FieldValues>(
             ))}
           </MultiSelectGroup>
         );
-      } else if (isSeparator(item)) {
-        // MultiSelect doesn't have separator, skip it
-        return null;
       }
       return null;
     });
@@ -285,23 +267,23 @@ function MultiSelectFieldComp<T extends FieldValues = FieldValues>(
 
             {/* MultiSelect Component */}
             <MultiSelect
-              //   disabled={disabled || isLoading}
+              values={value !== undefined ? value : field.value || []}
               onValuesChange={(newValues: string[]) => {
                 field.onChange(newValues);
                 onValuesChange?.(newValues);
               }}
-              values={value !== undefined ? value : field.value || []}
-              //   onOpenChange={onOpenChange}
-              {...restProps}
             >
               <FormControl className={cn("", controlClass)}>
                 <MultiSelectTrigger
                   id={safeId}
                   className={cn("w-full", triggerClass)}
+                  disabled={disabled || isLoading}
                   aria-label={props["aria-label"] || label}
                   aria-describedby={ariaDescribedBy || undefined}
                   aria-invalid={fieldState.error ? "true" : "false"}
                   aria-required={required}
+                  onBlur={field.onBlur}
+                  {...restProps}
                 >
                   <MultiSelectValue
                     placeholder={placeholder || `Select ${label || name}`}
@@ -338,11 +320,12 @@ function MultiSelectFieldComp<T extends FieldValues = FieldValues>(
   );
 }
 
-// No forwardRef needed for MultiSelect (it manages its own state internally)
-// const MultiSelectField = MultiSelectFieldComp as <
-//   T extends FieldValues = FieldValues,
-// >(
-//   props: MultiSelectFieldConfigProps<T>
-// ) => JSX.Element | null;
+const MultiSelectField = forwardRef(MultiSelectFieldComp) as <
+  T extends FieldValues = FieldValues,
+>(
+  props: MultiSelectFieldConfigProps<T> & {
+    ref?: Ref<HTMLButtonElement>;
+  }
+) => JSX.Element | null;
 
-export default MultiSelectFieldComp;
+export default MultiSelectField;

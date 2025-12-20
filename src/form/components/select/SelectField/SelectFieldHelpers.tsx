@@ -4,30 +4,8 @@ import {
   SelectLabel,
   SelectSeparator,
 } from "@src/components/ui/select";
-import {
-  SelectOptionGroup,
-  SelectOptionItem,
-  SelectSeparatorOption,
-  SelectSimpleOption,
-} from "./SelectFiled";
-
-export const isSimpleOption = (
-  item: SelectOptionItem
-): item is SelectSimpleOption => {
-  return "value" in item && "label" in item;
-};
-
-export const isOptionGroup = (
-  item: SelectOptionItem
-): item is SelectOptionGroup => {
-  return "options" in item && Array.isArray(item.options);
-};
-
-export const isSeparator = (
-  item: SelectOptionItem
-): item is SelectSeparatorOption => {
-  return "type" in item && item.type === "separator";
-};
+import { SelectOptionItem } from "../select.types";
+import { isOptionGroup, isSeparator, isSimpleOption } from "../select.utils";
 
 export const renderSelectOptions = (
   options: SelectOptionItem[],

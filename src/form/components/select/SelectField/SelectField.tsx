@@ -14,35 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@src/components/ui/select";
+import { mergeRefs } from "@src/form/utils/mergeRef";
+import toId from "@src/form/utils/toId";
 import { cn } from "@src/lib/utils";
 import { forwardRef, Ref /* SelectHTMLAttributes */, useMemo } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
-import { mergeRefs } from "../../utils/mergeRef";
-import toId from "../../utils/toId";
-import { renderSelectOptions } from "./selectFieldHelpers";
-
-// Enhanced option types
-export interface SelectSimpleOption {
-  _id?: string;
-  id?: string;
-  label: string;
-  value: string;
-  disabled?: boolean;
-}
-
-export interface SelectOptionGroup {
-  label: string;
-  options: SelectSimpleOption[];
-}
-
-export interface SelectSeparatorOption {
-  type: "separator";
-}
-
-export type SelectOptionItem =
-  | SelectSimpleOption
-  | SelectOptionGroup
-  | SelectSeparatorOption;
+import { SelectOptionItem } from "../select.types";
+import { renderSelectOptions } from "./SelectFieldHelpers";
 
 // type definitions
 interface FieldConfigProps<T extends FieldValues = FieldValues> {
@@ -214,7 +192,7 @@ const SelectFieldComp = <T extends FieldValues = FieldValues>(
               </p>
             )}
             <Select
-              disabled={disabled}
+              disabled={disabled || isLoading}
               required={required}
               form={form}
               autoComplete={autoComplete}
