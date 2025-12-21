@@ -4,14 +4,17 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
+import { ChatTextArea } from "./form/components/ChatTextarea";
 import FormBuilder, { FieldProps } from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
+import PasswordField from "./form/components/PasswordField";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
   textarea: z.string().min(1, "Textarea is required"),
   wind: z.string().min(1, "Wind is required"),
   price: z.string(),
+  password: z.string(),
 });
 
 type formType = z.infer<typeof formSchema>;
@@ -24,6 +27,7 @@ function App() {
       textarea: "",
       wind: "",
       price: "",
+      password: "",
     },
   });
 
@@ -64,7 +68,7 @@ function App() {
   }
 
   return (
-    <div className="flex flex-grow flex-col items-center justify-center gap-10">
+    <div className="flex min-h-screen flex-grow flex-col items-center justify-center gap-10 pb-20">
       <p className="bg-blue-600 p-4 text-center text-5xl text-white">
         Vite Template
       </p>
@@ -80,10 +84,18 @@ function App() {
               label="Wind"
               placeholder="Enter your wind"
             />
+            <PasswordField<formType>
+              name={"password"}
+              groupBtn={{
+                isBtnNeed: false,
+              }}
+            />
+
             <Button type="submit">Submit</Button>
           </form>
         </Form>
       </div>
+      <ChatTextArea variant="default" placeholder="Ask me anything..." />
     </div>
   );
 }

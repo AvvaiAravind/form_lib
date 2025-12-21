@@ -194,3 +194,23 @@ const NumberField = forwardRef(NumberFieldComp) as <
 ) => ReturnType<typeof NumberFieldComp>;
 
 export default NumberField;
+
+// future improvements
+/* 
+// Password strength indicator
+showStrength?: boolean;
+
+// Password requirements
+requirements?: {
+  minLength?: number;
+  requireUppercase?: boolean;
+  requireNumber?: boolean;
+  requireSpecial?: boolean;
+}
+
+// Caps lock warning
+showCapsLockWarning?: boolean;
+
+// Copy/paste control
+allowPaste?: boolean;
+*/
