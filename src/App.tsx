@@ -8,11 +8,12 @@ import { ChatTextArea } from "./form/components/ChatTextarea";
 import FormBuilder, { FieldProps } from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
 import PasswordField from "./form/components/PasswordField";
+import { RangeSlider } from "./components/RangeSlider";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
   textarea: z.string().min(1, "Textarea is required"),
-  wind: z.string().min(1, "Wind is required"),
+  wind: z.email,
   price: z.string(),
   password: z.string(),
 });
@@ -96,6 +97,11 @@ function App() {
         </Form>
       </div>
       <ChatTextArea variant="default" placeholder="Ask me anything..." />
+      <RangeSlider
+        mode="range"
+        label="Product Range"
+        formatValue={(value: number) => `$${value}`}
+      />
     </div>
   );
 }
