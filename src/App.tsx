@@ -2,13 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { RangeSlider } from "./components/RangeSlider";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
 import { ChatTextArea } from "./form/components/ChatTextarea";
 import FormBuilder, { FieldProps } from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
 import PasswordField from "./form/components/PasswordField";
-import { RangeSlider } from "./components/RangeSlider";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
