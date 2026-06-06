@@ -21,8 +21,8 @@ import {
 import { cn } from "@src/lib/utils";
 import { forwardRef, Ref /* SelectHTMLAttributes */, useCallback } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
-import { toId } from "storybook/internal/csf";
 import { mergeRefs } from "../utils/mergeRef";
+import toId from "../utils/toId";
 
 // Enhanced option types
 interface SimpleOption {
@@ -96,7 +96,6 @@ export type SelectFieldConfigProps<T extends FieldValues = FieldValues> =
     "aria-label"?: string;
     "aria-labelledby"?: string;
     "data-testid"?: string;
-    "data-*"?: string;
     style?: React.CSSProperties;
 
     // Allow any data-* attributes

@@ -13,7 +13,7 @@ const formSchema = z.object({
   textarea: z.string().min(1, "Textarea is required"),
   wind: z.string().min(1, "Wind is required"),
   price: z.string(),
-  location: z.string().min(1, "location is required"),
+  locations: z.string().min(1, "location is required"),
 });
 
 type formType = z.infer<typeof formSchema>;
@@ -26,7 +26,7 @@ function App() {
       textarea: "",
       wind: "",
       price: "",
-      location: "",
+      locations: "",
     },
   });
 
@@ -75,8 +75,8 @@ function App() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormBuilder fields={fields} />
-            <NumberField ref={inputRef} name="price" label="Price" />
-            <SelectField
+            <NumberField<formType> ref={inputRef} name="price" label="Price" />
+            <SelectField<formType>
               name="location"
               className={{
                 selectClass: "w-full",

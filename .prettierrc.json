@@ -1,4 +1,3 @@
-
 {
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./src/index.css",
@@ -15,5 +14,3 @@
   "arrowParens": "always",
   "htmlWhitespaceSensitivity": "strict"
 }
-
-

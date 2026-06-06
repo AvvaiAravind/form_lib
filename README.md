@@ -140,6 +140,7 @@ Tailwind CSS is pre configured with tailwind v4 in this template
 ---
 
 ### 2. **Add a Section for Dependencies**
+
 You could list the key dependencies and their purposes for future reference. For example:
 
 ```
@@ -157,7 +158,8 @@ markdown
 - **Prettier**: Code formatter for consistent styling.
 - **Prettier Plugin for Tailwind CSS**: Ensures Tailwind classes are sorted automatically.
 
-````
+```
+
 ## Future Enhancements
 
 - Add unit testing with Vitest or Jest.
@@ -170,6 +172,7 @@ markdown
    ```bash
    git clone <repository-url>
    cd vite-ttt-repo
+   ```
 
 ## Notes for Future Reference
 
@@ -180,4 +183,7 @@ markdown
 ---
 
 Feel free to customize this template further to suit your project needs!
-````
+
+```
+
+```

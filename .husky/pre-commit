@@ -1,6 +1,6 @@
 echo "Running lint and format checks..."
-npx lint-staged
+pnpm exec lint-staged
 
 # Check for build errors
 echo "Running build check..."
-npm run build
+pnpm run build
