@@ -67,7 +67,7 @@ function App() {
   }
 
   return (
-    <div className="flex flex-grow flex-col items-center justify-center gap-10">
+    <div className="flex grow flex-col items-center justify-center gap-10">
       <p className="bg-blue-600 p-4 text-center text-5xl text-white">
         Vite Template
       </p>
@@ -77,7 +77,7 @@ function App() {
             <FormBuilder fields={fields} />
             <NumberField<formType> ref={inputRef} name="price" label="Price" />
             <SelectField<formType>
-              name="location"
+              name="locations"
               className={{
                 selectClass: "w-full",
               }}
