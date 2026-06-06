@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
-import {
+import FormBuilder, {
   FieldProps,
   default as FormBuilderWithField,
 } from "./form/components/Field";

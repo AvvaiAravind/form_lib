@@ -12,7 +12,6 @@ import { forwardRef, InputHTMLAttributes, Ref } from "react";
 import { FieldPath, FieldValues, useFormContext } from "react-hook-form";
 import { mergeRefs } from "../utils/mergeRef";
 import toId from "../utils/toId";
-import toId from "../utils/toId";
 
 export type InputTypes =
   | "text"
