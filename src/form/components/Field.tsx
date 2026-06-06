@@ -1,8 +1,8 @@
-import { forwardRef, memo, ReactNode, Ref } from "react";
+import { forwardRef, JSX, memo, ReactNode, Ref } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import InputField, { InputTypes } from "./InputField";
 import NumberField from "./NumberField";
-import TextareaField from "./Textarea";
+import TextareaField from "./TextareaField";
 
 type FieldTypes = "textarea" | InputTypes | "number-text";
 
@@ -91,13 +91,23 @@ const FormBuilderBase = <T extends FieldValues = FieldValues>({
   children,
 }: FormBuilderProps<T>) => {
   if (fields && fields.length) {
-    return fields.map((field) => <FieldComp key={field.name} {...field} />);
+    return fields.map((field) => <FieldComp<T> key={field.name} {...field} />);
   }
   return <>{children}</>;
 };
 
-const FormBuilder = memo(FormBuilderBase) as any;
+const FormBuilder = memo(FormBuilderBase) as <
+  T extends FieldValues = FieldValues,
+>(
+  props: FormBuilderProps<T>
+) => JSX.Element;
 
-FormBuilder.Field = FieldComp;
+// ✅ Attach Field with proper typing
+type FormBuilderType = typeof FormBuilder & {
+  Field: typeof FieldComp;
+};
 
-export default FormBuilder;
+const FormBuilderWithField = FormBuilder as FormBuilderType;
+FormBuilderWithField.Field = FieldComp;
+
+export default FormBuilderWithField;

@@ -4,9 +4,12 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "./components/ui/button";
 import { Form } from "./components/ui/form";
-import FormBuilder, { FieldProps } from "./form/components/Field";
+import {
+  FieldProps,
+  default as FormBuilderWithField,
+} from "./form/components/Field";
 import NumberField from "./form/components/NumberField";
-import SelectField from "./form/components/SelectFiled";
+import SelectField from "./form/components/SelectField.tsx/SelectFiled";
 
 const formSchema = z.object({
   color: z.string().min(1, "Color is required"),
@@ -48,7 +51,7 @@ function App() {
         },
       },
       {
-        type: "textarea",
+        type: "textarea", // need to implement character counter option in future
         ref: textareaRef,
         name: "textarea",
         label: "Textarea",
@@ -103,7 +106,7 @@ function App() {
               showScrollButtons={true}
             />
 
-            <FormBuilder.Field
+            <FormBuilderWithField.Field<formType>
               type="search"
               name="wind"
               label="Wind"
